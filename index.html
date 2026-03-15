@@ -545,6 +545,7 @@
     btn.classList.add('active');
     document.getElementById('student-form').style.display = type === 'student' ? 'flex' : 'none';
     document.getElementById('startup-form').style.display = type === 'startup' ? 'flex' : 'none';
+    if (type === 'startup') document.getElementById('startup-form').style.cssText = 'display:flex; flex-wrap:wrap; justify-content:center; gap:10px;';
     document.getElementById('success-msg').style.display = 'none';
   }
 
