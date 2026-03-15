@@ -516,11 +516,13 @@
     <button class="tab-btn" onclick="switchTab('startup', this)">I'm a Startup</button>
   </div>
 
-  <form id="startup-form" class="waitlist-form" action="https://formspree.io/f/mjgaeekl" method="POST" style="display:none; flex-wrap:wrap;">
+  <form class="waitlist-form" id="startup-form" action="https://formspree.io/f/mjgaeekl" method="POST" style="display:none;">
     <input type="text" name="company" placeholder="Startup name" required>
     <input type="email" name="email" placeholder="Founder email" required>
-    <button type="submit" class="btn-white">Submit →</button>
-    <a href="https://forms.gle/Rpij86AkgnraeC437" target="_blank" class="btn-white" style="background:rgba(255,255,255,0.2); color:white; box-shadow:none;">Get in Touch →</a>
+    <div style="width:100%; display:flex; gap:10px; justify-content:center; margin-top:4px;">
+      <button type="submit" class="btn-white">Submit Details</button>
+      <a href="https://forms.gle/Rpij86AkgnraeC437" target="_blank" class="btn-white" style="background:rgba(255,255,255,0.25); color:white; box-shadow:none;">Full Registration →</a>
+    </div>
   </form>
   <div class="waitlist-form" id="startup-form" style="display:none;">
     <a href="https://forms.gle/Rpij86AkgnraeC437" target="_blank" class="btn-white" style="text-decoration:none;">Register Your Startup →</a>
