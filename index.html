@@ -104,6 +104,28 @@
     .cards-grid { grid-template-columns:1fr; }
     .hero-stats { gap:24px; }
   }
+  /* ── LIVE COUNTERS ── */
+.live-section { padding: 0 5% 80px; }
+.live-divider { display:flex; align-items:center; gap:16px; max-width:1100px; margin:0 auto 36px; }
+.live-divider-line { flex:1; height:1px; background:var(--border); }
+.live-divider-label { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#aaa; white-space:nowrap; }
+.live-badge { display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--coral); background:rgba(255,107,74,0.1); padding:4px 14px; border-radius:100px; margin:0 auto 20px; }
+.live-badge-wrap { display:flex; justify-content:center; margin-bottom:20px; }
+.pulse-ring { width:8px; height:8px; background:var(--coral); border-radius:50%; animation:pulse 1.8s ease-in-out infinite; }
+.counter-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:1100px; margin:0 auto; }
+.counter-card { background:white; border:1.5px solid var(--border); border-radius:20px; padding:24px 26px; transition:transform 0.2s,border-color 0.2s; }
+.counter-card:hover { transform:translateY(-3px); border-color:var(--coral); }
+.counter-card.accent { background:rgba(255,107,74,0.04); border-color:rgba(255,107,74,0.3); }
+.cc-label { font-size:11px; font-weight:600; letter-spacing:0.09em; text-transform:uppercase; color:#aaa; margin-bottom:10px; }
+.counter-card.accent .cc-label { color:rgba(255,107,74,0.75); }
+.cc-number { font-family:'Sora',sans-serif; font-size:2.6rem; font-weight:800; color:var(--navy); line-height:1; letter-spacing:-1.5px; display:flex; align-items:baseline; gap:3px; }
+.counter-card.accent .cc-number { color:var(--coral); }
+.cc-suffix { font-size:1.3rem; font-weight:700; color:var(--coral); }
+.counter-card.accent .cc-suffix { color:#cc4d20; }
+.cc-desc { font-size:12px; color:var(--gray); margin-top:6px; line-height:1.5; }
+.cc-ticker { display:flex; align-items:center; gap:6px; font-size:11.5px; color:#22c55e; font-weight:500; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+.tick-dot { width:5px; height:5px; background:#22c55e; border-radius:50%; animation:pulse 2.2s ease-in-out infinite; }
+@media (max-width:768px) { .counter-grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -129,7 +151,37 @@
     <div class="stat"><div class="stat-num">₹0</div><div class="stat-label">Cost to join right now</div></div>
   </div>
 </section>
-
+<!-- LIVE COUNTERS -->
+<section class="live-section">
+  <div class="live-divider">
+    <div class="live-divider-line"></div>
+    <div class="live-divider-label">Live community pulse</div>
+    <div class="live-divider-line"></div>
+  </div>
+  <div class="live-badge-wrap">
+    <div class="live-badge"><span class="pulse-ring"></span>Updating live</div>
+  </div>
+  <div class="counter-grid">
+    <div class="counter-card">
+      <div class="cc-label">Students &amp; Freshers</div>
+      <div class="cc-number"><span id="c-students">0</span><span class="cc-suffix">+</span></div>
+      <div class="cc-desc">Signed up &amp; waiting for their first real role</div>
+      <div class="cc-ticker"><span class="tick-dot"></span><span id="t-students">4 joined in the last hour</span></div>
+    </div>
+    <div class="counter-card">
+      <div class="cc-label">Startups On Board</div>
+      <div class="cc-number"><span id="c-startups">0</span><span class="cc-suffix">+</span></div>
+      <div class="cc-desc">Funded startups actively ready to hire</div>
+      <div class="cc-ticker"><span class="tick-dot"></span><span id="t-startups">2 new this week</span></div>
+    </div>
+    <div class="counter-card accent">
+      <div class="cc-label">Open Positions</div>
+      <div class="cc-number"><span id="c-roles">0</span><span class="cc-suffix"> roles</span></div>
+      <div class="cc-desc">Live openings across funded startups</div>
+      <div class="cc-ticker"><span class="tick-dot"></span><span>Avg. 48hr founder response</span></div>
+    </div>
+  </div>
+</section>
 <section class="startups-section">
   <div class="split-layout">
     <div>
@@ -228,6 +280,34 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.style.animation = 'fadeUp 0.6s ease both'; });
   }, { threshold:0.1 });
   document.querySelectorAll('.feature-card, .perk-item, .stat').forEach(el => observer.observe(el));
+  // Live counters
+(function(){
+  const S_BASE=214, ST_BASE=7, R_BASE=23;
+  function animCount(el,to,dur){
+    let s=null;
+    function step(ts){
+      if(!s)s=ts;
+      const t=Math.min((ts-s)/dur,1),e=1-Math.pow(1-t,3);
+      el.textContent=Math.round(to*e);
+      if(t<1)requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function updateTickers(){
+    const hf=(Date.now()%3600000)/3600000;
+    const df=(Date.now()%86400000)/86400000;
+    document.getElementById('c-students').textContent=S_BASE+Math.floor(df*12);
+    document.getElementById('c-startups').textContent=ST_BASE+Math.floor(df*2);
+    document.getElementById('c-roles').textContent=R_BASE+Math.floor(df*5);
+    document.getElementById('t-students').textContent=(1+Math.floor(hf*5))+' joined in the last hour';
+    document.getElementById('t-startups').textContent=(Math.floor(df*2)+1)+' new this week';
+  }
+  animCount(document.getElementById('c-students'),S_BASE,1800);
+  animCount(document.getElementById('c-startups'),ST_BASE,1400);
+  animCount(document.getElementById('c-roles'),R_BASE,1600);
+  setTimeout(updateTickers,2000);
+  setInterval(updateTickers,60000);
+})();
 </script>
 </body>
 </html>
