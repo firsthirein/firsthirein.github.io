@@ -313,50 +313,62 @@
   }
 
   // Animate from 0 on page load (uses fallback values until fetch returns)
-(async function(){
+(function(){
   const COUNTS_URL = 'https://script.google.com/macros/s/AKfycbyHNlagxTtn-Vl3D6FVMr9Dwr9zwQVPbUju_J560rs-KiHCzKIivgp1ZwM3ihiT49TE/exec';
 
-  const res = await fetch(COUNTS_URL);
-  const data = await res.json();
-
-  document.getElementById('c-students').textContent = data.students;
-  document.getElementById('c-startups').textContent = data.startups;
-  document.getElementById('c-roles').textContent = data.roles;
-})();
-
+  // Animate number from 0 → target
   function animCount(el, to, dur){
-    let s = null;
+    let start = null;
     function step(ts){
-      if(!s) s = ts;
-      const t = Math.min((ts-s)/dur, 1), e = 1-Math.pow(1-t, 3);
-      el.textContent = Math.round(to*e);
-      if(t<1) requestAnimationFrame(step);
+      if(!start) start = ts;
+      const t = Math.min((ts - start)/dur, 1);
+      const eased = 1 - Math.pow(1-t,3); // ease-out cubic
+      el.textContent = Math.round(to * eased);
+      if(t < 1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
   }
 
-  async function loadCounts(){
+  // Update live ticker messages
+  async function updateTickers(){
     try {
       const res = await fetch(COUNTS_URL);
       const data = await res.json();
+      const now = new Date();
 
+      // Animate main counts
       animCount(document.getElementById('c-students'), data.students, 1800);
       animCount(document.getElementById('c-startups'), data.startups, 1400);
       animCount(document.getElementById('c-roles'), data.roles, 1600);
 
+      // Dynamic "joined last hour" for students
+      let recentStudents = 0;
+      if(data.timestamps && Array.isArray(data.timestamps)){
+        data.timestamps.forEach(ts => {
+          if(now - new Date(ts) < 3600000) recentStudents++;
+        });
+      }
       document.getElementById('t-students').textContent =
-        Math.min(5, data.students) + ' joined recently';
+        recentStudents + ' joined in the last hour';
 
+      // Startups ticker dynamic
       document.getElementById('t-startups').textContent =
         data.startups + ' confirmed so far';
 
+      // Roles ticker dynamic (optional, can adjust message)
+      document.getElementById('t-roles')?.textContent =
+        data.roles + ' roles live';
+
     } catch(e) {
-      console.error(e);
+      console.error('Error updating tickers:', e);
     }
   }
 
-  loadCounts();
-  setInterval(loadCounts, 300000);
+  // Initial animation on page load
+  updateTickers();
+
+  // Refresh every 5 minutes
+  setInterval(updateTickers, 300000);
 })();
 </script>
 </body>
