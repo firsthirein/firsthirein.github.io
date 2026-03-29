@@ -313,8 +313,16 @@
   }
 
   // Animate from 0 on page load (uses fallback values until fetch returns)
-  (async function(){
+(async function(){
   const COUNTS_URL = 'https://script.google.com/macros/s/AKfycbyHNlagxTtn-Vl3D6FVMr9Dwr9zwQVPbUju_J560rs-KiHCzKIivgp1ZwM3ihiT49TE/exec';
+
+  const res = await fetch(COUNTS_URL);
+  const data = await res.json();
+
+  document.getElementById('c-students').textContent = data.students;
+  document.getElementById('c-startups').textContent = data.startups;
+  document.getElementById('c-roles').textContent = data.roles;
+})();
 
   function animCount(el, to, dur){
     let s = null;
