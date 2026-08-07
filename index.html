@@ -134,6 +134,31 @@
   <a href="https://datastudio.google.com/reporting/9c1bf436-4e4b-4e8d-b321-addc2fb4231f" target="_blank" class="nav-cta">View Live Dashboard</a>
 </nav>
 
+<!-- 🌟 THE RUNNING TICKER DISPLAY CONTAINER -->
+<div class="w-full bg-gray-900 py-3 overflow-hidden whitespace-nowrap border-b border-gray-800">
+  <div class="inline-block animate-marquee text-sm text-gray-300 font-medium">
+    <span id="ticker-content">Loading live ecosystem funding rounds...</span>
+  </div>
+</div>
+
+<!-- Add this simple CSS animation block to your style tag -->
+<style>
+  @keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+  .animate-marquee {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 25s linear infinite;
+  }
+  /* Pause marquee when a user hovers over a startup name */
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+</style>
+
+  
 <section class="hero">
   <div class="hero-blob blob-1"></div>
   <div class="hero-blob blob-2"></div>
@@ -319,6 +344,32 @@
   updateTickers();           // fetch and animate immediately
   setInterval(updateTickers, 300000); // refresh every 5 minutes
 })();
+// Pull live funding updates dynamically from your GitHub Pages file path
+  fetch('funded_ticker.json')
+    .then(response => response.json())
+    .then(startups => {
+      const ticker = document.getElementById('ticker-content');
+      if (startups.length === 0) {
+        ticker.innerHTML = "⚡ Curating this week's breakout startup cohorts live.";
+        return;
+      }
+      
+      // Map data array to continuous string ticker elements
+      const tickerText = startups.map(item => {
+        return `<span class="mx-8 inline-flex items-center">
+                  <b class="text-white">${item.name}</b> 
+                  <span class="mx-2 text-indigo-400 font-bold">💰 raised ${item.amount}</span> 
+                  (${item.round})
+                </span>`;
+      }).join(' • ');
+      
+      // Duplicate string block to ensure seamless continuous visual scrolling loops
+      ticker.innerHTML = tickerText + ' • ' + tickerText;
+    })
+    .catch(err => {
+      console.log("Ticker loading minimized:", err);
+      document.getElementById('ticker-content').innerHTML = "🚀 Fresh startup cohorts onboarding daily.";
+    });
 </script>
 </body>
 </html>
