@@ -379,19 +379,43 @@
         const name = company.name || 'Startup';
         const amount = company.amount || 'Undisclosed';
         const round = company.round || 'Funding';
+        const website = company.website || '';
         
-        return `<span class="mx-10 inline-flex items-center tracking-tight" style="font-family: 'Sora', sans-serif;">
-                  <span style="color: #334155; font-weight: 800; font-size: 1.15rem; letter-spacing: -0.5px; text-transform: none;">${name}</span>
-                  <span style="background: rgba(255, 107, 74, 0.08); color: var(--coral); font-weight: 700; font-size: 0.72rem; padding: 2px 8px; border-radius: 100px; margin-left: 8px; letter-spacing: 0.5px;">${amount}</span>
-                  <span style="color: var(--gray); font-weight: 500; font-size: 0.72rem; margin-left: 6px; text-transform: lowercase;">(${round})</span>
+        let logoHtml = `<span style="color: #1a2e42; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.5px; font-family: 'Sora', sans-serif;">${name}</span>`;
+        
+        // 🌟 ZERO-COST DYNAMIC IMAGE ENGINE: Bypasses static asset hosting entirely
+        if (website && website.toLowerCase() !== 'not accessible' && website.includes('.')) {
+          try {
+            // Extract pure domain string layout (e.g. extracts "homerun.in" from "https://homerun.in")
+            let domain = website.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
+            
+            // Build absolute image tags using free asset mirror streaming pathways
+            logoHtml = `<img src="https://clearbit.com{domain}" 
+                             alt="${name}" 
+                             style="height: 24px; max-width: 120px; object-fit: contain; filter: grayscale(100%) contrast(120%); mix-blend-mode: multiply;" 
+                             onerror="this.onerror=null; this.replaceWith('${name}');" />`;
+          } catch(e) {
+            console.log("Logo conversion minimized, reverting to brand-text format.");
+          }
+        }
+        
+        return `<span class="mx-12 inline-flex items-center gap-4">
+                  <!-- Dynamic Image Logo Frame or Stylized Text Backup -->
+                  <span class="inline-flex items-center justify-center">${logoHtml}</span>
+                  
+                  <!-- Unified Compact Valuation Metrics Ribbon Layout -->
+                  <span class="inline-flex items-center" style="font-family: 'Sora', sans-serif;">
+                    <span style="background: rgba(255, 107, 74, 0.08); color: var(--coral); font-weight: 700; font-size: 0.72rem; padding: 2px 8px; border-radius: 100px; letter-spacing: 0.5px;">${amount}</span>
+                    <span style="color: var(--gray); font-weight: 500; font-size: 0.72rem; margin-left: 6px; text-transform: lowercase;">(${round})</span>
+                  </span>
                 </span>`;
-      }).join(' <span style="color: #CBD5E1; font-weight: 300;">•</span> ');
+      }).join(' <span style="color: #CBD5E1; font-weight: 300; margin: 0 10px;">•</span> ');
       
-      tickerContent.innerHTML = tickerString + ' <span style="color: #CBD5E1; font-weight: 300;">•</span> ' + tickerString;
+      tickerContent.innerHTML = tickerString + ' <span style="color: #CBD5E1; font-weight: 300; margin: 0 10px;">•</span> ' + tickerString;
     })
     .catch(error => {
-      console.warn("Ticker rendering deferred:", error);
-      document.getElementById('ticker-content').innerHTML = "<span class='text-slate-400 font-medium mx-8 uppercase text-xs'>⚡ MATCHING HUNGRY GRADUATES WITH FUNDED FOUNDER MANIFESTOS • FIRSTHIRE.IN</span>";
+      console.warn("Ticker layout fallback triggered:", error);
+      document.getElementById('ticker-content').innerHTML = "<span class='text-slate-400 font-medium mx-8 uppercase text-xs'>⚡ LIVE B2B TALENT PIPELINES PIPING SEAMLESSLY • FIRSTHIRE.IN</span>";
     });
 </script>
 </body>
