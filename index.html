@@ -13,7 +13,39 @@
   html { scroll-behavior:smooth; }
   body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--navy); overflow-x:hidden; }
 
-  nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:18px 5%; display:flex; align-items:center; justify-content:space-between; background:rgba(255,248,243,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+  /* ─────────────── 👇 PASTE NEW TICKER STYLES HERE ─────────────── */
+  .brand-ticker-container {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 48px;
+    background: var(--cream);
+    z-index: 1000;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(13, 27, 42, 0.05);
+  }
+  .brand-ticker-wrap {
+    width: 100%; overflow: hidden; white-space: nowrap; display: flex; align-items: center;
+  }
+  .ticker-header-label {
+    font-family: 'Sora', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--gray); padding: 0 24px; background: var(--cream);
+    z-index: 1010; border-right: 1px solid var(--border); height: 100%; display: flex; align-items: center; flex-shrink: 0;
+  }
+  .brand-ticker-scroll {
+    display: inline-block; white-space: nowrap; animation: seamless-marquee 40s linear infinite;
+  }
+  .brand-ticker-scroll:hover { animation-play-state: paused; cursor: pointer; }
+  @keyframes seamless-marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  /* ────────────────────────────────────────────────────────── */
+
+  /* 🚨 CRUCIAL: NOTICE THE CHANGED top FIELD HERE FROM 0 TO 48px */
+  nav { position:fixed; top:48px; left:0; right:0; z-index:100; padding:18px 5%; display:flex; align-items:center; justify-content:space-between; background:rgba(255,248,243,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+  
   .logo { font-family:'Sora',sans-serif; font-weight:800; font-size:1.4rem; color:var(--navy); letter-spacing:-0.5px; }
   .logo span { color:var(--coral); }
   .nav-cta { background:var(--coral); color:white; padding:10px 22px; border-radius:100px; font-family:'Sora',sans-serif; font-weight:600; font-size:0.85rem; text-decoration:none; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 14px rgba(255,107,74,0.35); }
@@ -103,7 +135,7 @@
     .cards-grid { grid-template-columns:1fr; }
     .hero-stats { gap:24px; }
   }
-  /* ── LIVE COUNTERS ── */ 500
+  /* ── LIVE COUNTERS ── */ 
 .live-section { padding: 0 5% 80px; }
 .live-divider { display:flex; align-items:center; gap:16px; max-width:1100px; margin:0 auto 36px; }
 .live-divider-line { flex:1; height:1px; background:var(--border); }
@@ -128,63 +160,23 @@
 </style>
 </head>
 <body>
-<!-- 🌟 UPDATED LIVE FUNDING TICKER MARQUEE -->
-<div class="block w-full clear-both bg-slate-900 border-b border-slate-800 py-2.5 overflow-hidden z-50 relative" style="width: 100vw; max-width: 100%;">
-  <div class="w-full overflow-hidden whitespace-nowrap">
-    <div class="inline-block animate-marquee text-xs md:text-sm text-slate-300 font-semibold tracking-wide uppercase whitespace-nowrap">
-      <span id="ticker-content">
-        ⚡ Tracking live ecosystem startup funding rounds... Loading raw feed...
-      </span>
+
+<!-- 🌟 TOP PRODUCTION STARTUP LOGO-STYLE TICKER MARQUEE -->
+<div class="brand-ticker-container">
+  <div class="ticker-header-label">
+    🔥 Recent Funded Startups (Past 7 Days)
+  </div>
+  <div class="brand-ticker-wrap">
+    <div class="brand-ticker-scroll" id="ticker-content">
+      <span>CONNECTING ECOSYSTEM TALENT MAINFRAMES... LOADING FEED COHORTS...</span>
     </div>
   </div>
 </div>
-
-<!-- Add these exact animation rules into your global <style> block -->
-<style>
-  @keyframes marquee {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-  }
-  .animate-marquee {
-    display: inline-block;
-    padding-left: 100%;
-    animation: marquee 30s linear infinite;
-  }
-  /* Pause scrolling loop when cursor hovers over a company name */
-  .animate-marquee:hover {
-    animation-play-state: paused;
-    cursor: pointer;
-  }
-</style>
 
 <nav>
   <div class="logo">First<span>Hire</span></div>
   <a href="https://datastudio.google.com/reporting/9c1bf436-4e4b-4e8d-b321-addc2fb4231f" target="_blank" class="nav-cta">View Live Dashboard</a>
 </nav>
-
-<!-- 🌟 THE RUNNING TICKER DISPLAY CONTAINER -->
-<div class="w-full bg-gray-900 py-3 overflow-hidden whitespace-nowrap border-b border-gray-800">
-  <div class="inline-block animate-marquee text-sm text-gray-300 font-medium">
-    <span id="ticker-content">Loading live ecosystem funding rounds...</span>
-  </div>
-</div>
-
-<!-- Add this simple CSS animation block to your style tag -->
-<style>
-  @keyframes marquee {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-  }
-  .animate-marquee {
-    display: inline-block;
-    padding-left: 100%;
-    animation: marquee 25s linear infinite;
-  }
-  /* Pause marquee when a user hovers over a startup name */
-  .animate-marquee:hover {
-    animation-play-state: paused;
-  }
-</style>
 
   
 <section class="hero">
@@ -372,31 +364,34 @@
   updateTickers();           // fetch and animate immediately
   setInterval(updateTickers, 300000); // refresh every 5 minutes
 })();
-// Pull live funding updates dynamically from your GitHub Pages file path
+  // 🌟 FINALIZED PREMIUM DATA INJECTION ENGINE
   fetch('funded_ticker.json')
     .then(response => response.json())
     .then(startups => {
-      const ticker = document.getElementById('ticker-content');
-      if (startups.length === 0) {
-        ticker.innerHTML = "⚡ Curating this week's breakout startup cohorts live.";
+      const tickerContent = document.getElementById('ticker-content');
+      
+      if (!startups || startups.length === 0) {
+        tickerContent.innerHTML = "<span class='text-slate-400 font-medium tracking-wide mx-8 uppercase text-xs'>🚀 BROADCASTING HIGH-GROWTH STARTUP ECOSYSTEM FUNDING EVENTS LIVE</span>";
         return;
       }
       
-      // Map data array to continuous string ticker elements
-      const tickerText = startups.map(item => {
-        return `<span class="mx-8 inline-flex items-center">
-                  <b class="text-white">${item.name}</b> 
-                  <span class="mx-2 text-indigo-400 font-bold">💰 raised ${item.amount}</span> 
-                  (${item.round})
+      const tickerString = startups.map(company => {
+        const name = company.name || 'Startup';
+        const amount = company.amount || 'Undisclosed';
+        const round = company.round || 'Funding';
+        
+        return `<span class="mx-10 inline-flex items-center tracking-tight" style="font-family: 'Sora', sans-serif;">
+                  <span style="color: #334155; font-weight: 800; font-size: 1.15rem; letter-spacing: -0.5px; text-transform: none;">${name}</span>
+                  <span style="background: rgba(255, 107, 74, 0.08); color: var(--coral); font-weight: 700; font-size: 0.72rem; padding: 2px 8px; border-radius: 100px; margin-left: 8px; letter-spacing: 0.5px;">${amount}</span>
+                  <span style="color: var(--gray); font-weight: 500; font-size: 0.72rem; margin-left: 6px; text-transform: lowercase;">(${round})</span>
                 </span>`;
-      }).join(' • ');
+      }).join(' <span style="color: #CBD5E1; font-weight: 300;">•</span> ');
       
-      // Duplicate string block to ensure seamless continuous visual scrolling loops
-      ticker.innerHTML = tickerText + ' • ' + tickerText;
+      tickerContent.innerHTML = tickerString + ' <span style="color: #CBD5E1; font-weight: 300;">•</span> ' + tickerString;
     })
-    .catch(err => {
-      console.log("Ticker loading minimized:", err);
-      document.getElementById('ticker-content').innerHTML = "🚀 Fresh startup cohorts onboarding daily.";
+    .catch(error => {
+      console.warn("Ticker rendering deferred:", error);
+      document.getElementById('ticker-content').innerHTML = "<span class='text-slate-400 font-medium mx-8 uppercase text-xs'>⚡ MATCHING HUNGRY GRADUATES WITH FUNDED FOUNDER MANIFESTOS • FIRSTHIRE.IN</span>";
     });
 </script>
 </body>
